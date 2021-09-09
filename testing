@@ -1,0 +1,49 @@
+<ScreenTwo>:
+    GridLayout:
+        cols: 1
+        BoxLayout:
+            orientation:'vertical'
+            padding: 0
+            size_hint: (1, .2)
+            Image:
+                source: 'Logo.png'
+        
+        # creating the size
+        # and the alignment of the tab 
+        TabbedPanel:
+            tab_width: app.windowSize[0] / 3
+            do_default_tab: False
+        
+            # Create tab 1
+            TabbedPanelItem:
+                text: 'Search Trucks'
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: (1, .06)
+                    TextInput:
+                        text: 'Search'
+                        multiline: False
+                        height: 5
+                        size_hint: (.7, 1)
+                        focus: True
+                        
+                    Button:
+                        text: 'Search'
+                        size_hint: (.3, 1)
+        
+            # Create 2nd tab
+            TabbedPanelItem:
+                text: 'Trucks Near You'
+                BoxLayout:
+                    Label:
+                        text: 'Press button'
+                    Button:
+                        text: 'Click it'
+
+            TabbedPanelItem:
+                text: 'Account'
+
+
+
+        
+WebsiteBuilderPassword = cbdcdabeac237a27
