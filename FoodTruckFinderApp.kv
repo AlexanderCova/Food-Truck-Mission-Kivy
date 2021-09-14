@@ -5,7 +5,7 @@
         cols: 1
         BoxLayout:
             orientation: 'vertical'
-            size_hint: (1, .2)
+            size_hint: (1, .15)
             Image:
                 source: 'Logo.png'
         BoxLayout:
@@ -31,10 +31,91 @@
                     on_press:
                         root.manager.transition.direction = 'left'
                         root.manager.current = 'create_account_screen'
+        
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, .4)
+
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .3
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: .3
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    orientation: 'vertical'
+                BoxLayout:
+                    orientation: 'vertical'
+                Label:
+                    text: 'For Trucks -->'
+            Button:
+                background_normal: 'FoodTruck.png'
+                background_down: 'FoodTruck.png'
+                border: (0, 0, 0, 0)
+                size_hint_y: None
+                height: '100dp'
+                color: 0, 0, 0, 0
+                on_press:
+                    root.manager.transition.direction = 'down'
+                    root.manager.current = 'truck_start_screen'
+
+<TruckStartScreen>:
+    GridLayout:
+        cols: 1
         BoxLayout:
             orientation: 'vertical'
             size_hint: (1, .4)
-                    
+            Image:
+                source: 'Logo.png'
+
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .6)
+            padding: (0, 50, 0, 0)
+            GridLayout:
+                cols: 1
+                spacing: (0, 10)
+                
+                Button:
+                    text: "Food Truck Login"
+                    font_size: 20
+                    font_name: 'RobotoSlab-Medium.ttf'
+                    on_press:
+                        root.manager.transition.direction = 'left'
+                        root.manager.current = 'truck_login_screen'
+
+                Button:
+                    text: "Create Food Truck Account"
+                    font_size: 20
+                    font_name: 'RobotoSlab-Medium.ttf'
+                    on_press:
+                        root.manager.transition.direction = 'left'
+                        root.manager.current = 'create_truck_screen'
+                
+        BoxLayout:
+            orientation: 'vertical'
+
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: .2
+            Button:
+                text: 'Back'
+                height: 40
+                font_size: 20
+                font_name: 'RobotoSlab-Medium.ttf'
+                on_press: root.back()
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: .1
+            
+
+
+
+
 <LoginScreen>:
     GridLayout:
         cols: 1
@@ -73,6 +154,7 @@
                     font_name: 'RobotoSlab-Medium.ttf'
                 TextInput:
                     id: password
+                    password: True
                     multiline: False
                 
                 Button:
@@ -129,6 +211,7 @@
                     font_name: 'RobotoSlab-Medium.ttf'
                 TextInput:
                     id: password
+                    password: True
                     multiline: False
                 
                 Button:
@@ -143,6 +226,141 @@
             orientation: "vertical"
             
 
+<TruckPageScreen>:
+    GridLayout:
+        cols: 1
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .2)
+            Image:
+                source: 'Logo.png'
+
+
+<CreateTruckScreen>:
+    GridLayout:
+        cols: 1
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .3)
+            Image:
+                source: 'Logo.png'
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .2)
+            padding: (0, 30, 0, 30)
+            Label:
+                font_name: 'RobotoSlab-Medium.ttf'
+                font_size: 25
+                text: "Create New Food \n   Truck Account"
+                
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .57)
+            GridLayout:
+                cols: 2
+                spacing: (3, 5)
+
+                Label:
+                    text: "Email:"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                TextInput:
+                    id: email
+                    multiline: False
+
+                Label:
+                    text: "Truck Name:"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                TextInput:
+                    id: truck_name
+                    multiline: False
+                
+                Label:
+                    text: "Food Type:"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                Spinner:
+                    id: food_type
+                    text: "Food Type"
+                    font_name: 'RobotoSlab-Medium.ttf' 
+                    values: ['Breakfast', 'Mexican', 'BBq', 'Comfort Food', 'Italian', 'Drinks', 'Desert']
+                
+                Label:
+                    text: "Password:"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                TextInput:
+                    id: password
+                    password: True
+                    multiline: False
+                
+                Button:
+                    text: "Create Account"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                    on_press: root.createAccount()
+                Button:
+                    text: "Back"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                    on_press: root.back()
+        BoxLayout:
+            orientation: "vertical"
+
+<TruckLoginScreen>:
+    GridLayout:
+        cols: 1
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .3)
+            Image:
+                source: 'Logo.png'
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .2)
+            padding: (0, 20, 0, 20)
+
+            Label:
+                font_size: 25
+                text: "Food Truck Login"
+                font_name: 'RobotoSlab-Medium.ttf'
+        
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (1, .45)
+            GridLayout:
+                cols: 2
+                spacing: (3, 5)
+
+                Label:
+                    text: "Email:"
+                    font_size: 15
+                    font_name: 'RobotoSlab-Medium.ttf'
+                TextInput:
+                    id: email
+                    multiline: False
+
+                Label:
+                    text: "Truck Name:"
+                    font_size: 15
+                    font_name: 'RobotoSlab-Medium.ttf'
+                TextInput:
+                    id: truck_name
+                    multiline: False
+
+                Label:
+                    text: "Password:"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                TextInput:
+                    id: password
+                    password: True
+                    multiline: False
+                
+                Button:
+                    text: "Login"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                    on_press: root.login()
+                Button:
+                    text: "Back"
+                    font_name: 'RobotoSlab-Medium.ttf'
+                    on_press: root.back()
+        BoxLayout:
+            orientation: 'vertical'
 
 <UserScreen>:
     GridLayout:
@@ -164,60 +382,56 @@
             TabbedPanelItem:
                 text: 'Search Trucks'
                 font_name: 'RobotoSlab-Medium.ttf'
-                BoxLayout:
-                    orientation: 'horizontal'
-                    height: 
-                    TextInput:
-                        text: 'Search'
-                        multiline: False
-                        height: 5
-                        size_hint: (.7, 1)
-                        focus: True
+                GridLayout:
+                    cols: 1
+                    spacing: (0, 5)
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint: (1, .075)
                         
-                    Button:
-                        text: 'Search'
-                        font_name: 'RobotoSlab-Medium.ttf'
-                        size_hint: (.3, 1)
-
-                ScrollView:
-                    
-                    # setting the width of the scrollbar to 50pixels
-                    bar_width: 5
-                    # setting the color of the active bar using rgba
-                    bar_color: 5, 10, 15, .8
-                    # setting the color of the inactive bar using rgba
-                    
-                    # setting the content only to scroll via bar, not content
-                    
-                    do_scroll_y: True
-                    GridLayout:
-                        id: LayoutForTrucks
-                        height: self.minimum_height
-                        cols: 1
-                        size_hint_y: None
-                        row_default_height: '200dp'
-                        row_force_default: True
+                        TextInput:
+                            hint_text: 'Search'
+                            multiline: False
+                            height: 5
+                            size_hint: (.7, 1)
+                            focus: True
+                            
+                        Button:
+                            text: 'Search'
+                            font_name: 'RobotoSlab-Medium.ttf'
+                            size_hint: (.3, 1)
+                        
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint: (1, .075)
                         Button:
                             id: Buttonone
-                            text: 'one'
-                            
+                            text: 'Refresh'
+                            font_name: 'RobotoSlab-Medium.ttf'
                             on_press: root.load_Trucks()
-                        Button:
-                            text: 'two'
-                        Button:
-                            text: 'three'
-                        Button:
-                            text: 'four'
-                        Button:
-                            text: 'one'
-                        Button:
-                            text: 'two'
-                        Button:
-                            text: 'three'
-                        Button:
-                            text: 'four'
+
+                    ScrollView:
                         
+                        # setting the width of the scrollbar to 50pixels
+                        bar_width: 5
+                        # setting the color of the active bar using rgba
+                        bar_color: 5, 10, 15, .8
+                        # setting the color of the inactive bar using rgba
                         
+                        # setting the content only to scroll via bar, not content
+                        
+                        do_scroll_y: True
+                        GridLayout:
+                            id: LayoutForTrucks
+                            height: self.minimum_height
+                            cols: 1
+                            size_hint_y: None
+                            row_default_height: '100dp'
+                            row_force_default: True
+                            spacing: (0, 40)
+                            
+                            
+                            
                         
                         
 
@@ -237,3 +451,6 @@
             TabbedPanelItem:
                 text: 'Account'
                 font_name: 'RobotoSlab-Medium.ttf'
+
+                
+
