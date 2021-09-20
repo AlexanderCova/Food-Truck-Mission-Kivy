@@ -271,7 +271,8 @@ class UserScreen(Screen):
             layout = GridLayout(cols = 2, padding=(0, 0, 0, 20))
             
             openPageButton = Button(text='Open Page', size_hint_y=.1)
-            openPageButton.bind(on_press=truckPageScreen.openPage(self, truckNameLabel.text, foodTypeLabel.text, isOpenLabel.text))
+            
+            
             
 
             layout.add_widget(nameLabel)
@@ -289,7 +290,9 @@ class UserScreen(Screen):
 
             foodtypeOffset += 1
             isopenOffset += 1
-    
+        self.print_childs()
+    def print_childs(self):
+        print(self.children[0].children[0].children[0].children[0].children[0].children[0].children)
     
         
 class TruckScreen(Screen):
