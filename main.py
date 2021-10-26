@@ -25,6 +25,9 @@ import smtplib, ssl
 import re
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from functools import partial
+from kivy_garden.mapview import MapView
+
 
 WindowSize = Window.size
 Window.clearcolor = (33/255, 33/255, 33/255, 1)
@@ -35,7 +38,7 @@ Config.write()
 
 Builder.load_file('FoodTruckFinderApp.kv')
 
-robotoSlab = 'RobotoSlab-Medium.ttf'
+robotoSlab = 'Azonix.otf'
 
 
 port = 465
@@ -57,6 +60,17 @@ truckMSG = """Subject: Thanks For Registering Your Truck ON FoodTruckFinderMI
 screen_manager = ScreenManager()
 
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+
+
+truckPageName = ''
+truckPageFood = ''
+truckPageOpen = False
+
+truckTitleLabel = None
+selectedTruck = []
+
+
+#SSH command ssh root@216.137.179.68 -p7822
 
 
 cnx = mysql.connector.connect(
@@ -183,7 +197,7 @@ class CreateTruckScreen(Screen):
 
             emailbody = MIMEText(truckMSG, 'plain')
             msg.attach(emailbody)
-            cursor.execute(f"INSERT INTO trucks (email, truckname, foodtype, isopen) VALUES ('{emailValue}', '{truckNameValue}', '{foodTypeValue}', {False})")
+            cursor.execute(f"INSERT INTO trucks (email, truckname, password, foodtype, isopen) VALUES ('{emailValue}', '{truckNameValue}', '{passwordValue}', '{foodTypeValue}', {False})")
             cnx.commit()
             context = ssl.create_default_context()
 
@@ -196,10 +210,10 @@ class CreateTruckScreen(Screen):
             except:
 
                 screen_manager.transition.direction = 'left'
-                screen_manager.current = 'user_screen'
+                screen_manager.current = 'truck_screen'
                 
             else:
-                label = Label(text='Invalid Email Address', font=robotoSlab, color=(1, 0, 0, 1), padding=(0, 20))
+                label = Label(text='Invalid Email Address', font_name=robotoSlab, color=(1, 0, 0, 1), padding=(0, 20))
                 self.add_widget(label)
 
 
@@ -214,14 +228,14 @@ class TruckLoginScreen(Screen):
         truckNameValue = self.ids["truck_name"].text
 
         
-        cursor.execute(f"SELECT email from users WHERE email='{emailValue}' AND truckname = '{truckNameValue}' password = '{passwordValue}';")
+        cursor.execute(f"SELECT email from trucks WHERE email='{emailValue}' AND truckname='{truckNameValue}' AND password='{passwordValue}';")
 
         
-        if not cursor.fetchone():  # An empty result evaluates to False.
+        if not cursor.fetchone():  # An empty result evaluates to False.clause
             print("Login failed")
         else:
             screen_manager.transition.direction = 'left'
-            screen_manager.current = 'user_screen'
+            screen_manager.current = 'truck_screen'
 
 
 
@@ -230,17 +244,16 @@ class TruckLoginScreen(Screen):
         screen_manager.current = "truck_start_screen"
 
 
+    
 
-class TruckPageScreen(Screen):
-    def openPage(self, truckName, foodType, IsOpen):
-        screen_manager.transition.direction = 'left'
-        screen_manager.current = 'truck_page_screen'
-
-
+    
 
 
 class UserScreen(Screen):
     def load_Trucks(self):
+        global truckPageName
+        global truckPageFood
+        global truckPageOpen
 
         
         self.ids['LayoutForTrucks'].clear_widgets()
@@ -265,12 +278,15 @@ class UserScreen(Screen):
             openLabel = Label(text="Currently Open: ", font_name=robotoSlab)
             if truckisopen[isopenOffset][0] == 0:
                 isOpenLabel = Label(text="Closed", font_name=robotoSlab)
-            elif truckisopen[isopenOffset][0] == 0:
+            elif truckisopen[isopenOffset][0] == 1:
                 isOpenLabel = Label(text="Open", font_name=robotoSlab)
             box = BoxLayout(orientation='vertical')
             layout = GridLayout(cols = 2, padding=(0, 0, 0, 20))
-            
-            openPageButton = Button(text='Open Page', size_hint_y=.1)
+
+
+            #initPage(self, x[0], truckfoodtypes[foodtypeOffset][0], truckisopen[isopenOffset][0])
+            openPageButton = Button(text='Open Page', size_hint_y=.4)
+            openPageButton.bind(on_press=partial(self.select_Truck, x[0], truckfoodtypes[foodtypeOffset][0], truckisopen[isopenOffset][0]))
             
             
             
@@ -290,18 +306,78 @@ class UserScreen(Screen):
 
             foodtypeOffset += 1
             isopenOffset += 1
-        self.print_childs()
+        
+
+
+    def select_Truck(self, name, food, isOpen, button):
+        truckInfoMenu = button.parent.parent.parent.parent.parent.parent.children[1].children[2].children[0].children[2]
+
+        #Setup Selected Truck Panel, add new widgets including mapview, truck name, is open, and food type. and a refresh button.
+
+        box = BoxLayout(orientation='vertical')
+        titleBox = BoxLayout(orientation='horizontal', size_hint_y=.1, padding=(0, 20, 0, 0))
+        layout = GridLayout(cols=2, size_hint_y=.2)
+        placeholderBox = BoxLayout(orientation='vertical')
+        mapbox = BoxLayout(orientation='vertical')
+
+        truckTitle = Label(text=name, font_name=robotoSlab, font_size=20)
+        currentlyOpenDesc = Label(text='Status:')
+        if isOpen == 0:
+            currentlyOpen = Label(text="Closed", font_name=robotoSlab, color=(1, 0, 0, 1))
+        elif isOpen == 1:
+            currentlyOpen = Label(text="Open", font_name=robotoSlab, color=(0, 1, 0, 1))
+
+
+        foodTypeDesc = Label(text='Food:', font_name=robotoSlab)
+        foodType = Label(text=food, font_name=robotoSlab)
+
+        truckMap = MapView(zoom=11, lat=-33.867, lon=151.206)
+
+
+        layout.add_widget(foodTypeDesc)
+        layout.add_widget(foodType)
+        layout.add_widget(currentlyOpenDesc)
+        layout.add_widget(currentlyOpen)
+
+        titleBox.add_widget(truckTitle)
+        
+        mapbox.add_widget(truckMap)
+
+        box.add_widget(titleBox)
+        box.add_widget(layout)
+        box.add_widget(mapbox)
+        
+
+        truckInfoMenu.add_widget(box)
+
+
+
+
+
+
+
     def print_childs(self):
         print(self.children[0].children[0].children[0].children[0].children[0].children[0].children)
     
-        
+
+
+
 class TruckScreen(Screen):
-    pass
+    def change_status(self): 
+        if self.ids['statusLabel'].text == 'Closed':
+            self.ids['statusLabel'].text = 'Open'
+            self.ids['statusLabel'].color = (0, 1, 0, 1)
+            cursor.execute("""UPDATE trucks SET isopen = 1 WHERE isopen = 0""")
+            cnx.commit()
 
 
+        elif self.ids['statusLabel'].text == 'Open':
+            self.ids['statusLabel'].text = 'Closed'
+            self.ids['statusLabel'].color = (1, 0, 0, 1)
+            cursor.execute("""UPDATE trucks SET isopen = 0 WHERE isopen = 1""")
+            cnx.commit()
 
-class TruckPageScreen(Screen):
-    pass
+
 
 screen_manager.add_widget(StartScreen(name ="start_screen"))
 screen_manager.add_widget(LoginScreen(name ="login_screen"))
@@ -310,8 +386,7 @@ screen_manager.add_widget(TruckStartScreen(name="truck_start_screen"))
 screen_manager.add_widget(CreateTruckScreen(name='create_truck_screen'))
 screen_manager.add_widget(TruckLoginScreen(name='truck_login_screen'))
 screen_manager.add_widget(UserScreen(name ="user_screen"))
-screen_manager.add_widget(TruckPageScreen(name='truck_page_screen'))
-
+screen_manager.add_widget(TruckScreen(name='truck_screen'))
 
 
   
