@@ -254,10 +254,20 @@ class UserScreen(Screen):
         global truckPageName
         global truckPageFood
         global truckPageOpen
-
+        global cnx
         
         self.ids['LayoutForTrucks'].clear_widgets()
 
+        cnx.close()
+        cnx = mysql.connector.connect(
+            user='app',
+            password='Cian62016!',
+            host='216.137.179.68',
+            database="test"
+        )
+
+        cursor = cnx.cursor()
+        
         foodtypeOffset = 0
         isopenOffset = 0
 
@@ -271,6 +281,12 @@ class UserScreen(Screen):
         truckisopen = cursor.fetchall()
 
         for x in trucknames:
+            print(x[0])
+            print(truckfoodtypes[foodtypeOffset][0])
+            print(truckisopen[isopenOffset][0])
+
+
+
             nameLabel = Label(text='Truck Name: ', font_name=robotoSlab)
             truckNameLabel = Label(text=str(x[0]), font_name=robotoSlab)
             foodLabel = Label(text="Food Type: ", font_name=robotoSlab)
@@ -303,6 +319,8 @@ class UserScreen(Screen):
 
 
             buttonText = self.ids['LayoutForTrucks'].add_widget(box)
+
+
 
             foodtypeOffset += 1
             isopenOffset += 1
